@@ -1,0 +1,145 @@
+---
+title: "R Notebook"
+output: html_notebook
+---
+
+```{r}
+library(tidyverse)
+#create demographic variables
+Stdt_Survey_ID <- c(1:8950)
+School_Name <- sprintf("School %d",1:895)
+School_District_Code <- c("001")
+School_Geo <- c("1")
+Student_Last <- c(rep("Doe",8950))
+Student_First <- c(rep("Jane",8950))
+Student_Middle <- c(rep("Test",8950))
+Stdt_Dis_ID <- School_District_Code
+Stdt_State_ID <- c(rep(29,8950))
+Stdt_DOB_MM <- sample(1:12,8950,replace=TRUE)
+Stdt_DOB_DD <- sample(1:28,8950,replace=TRUE)
+Stdt_DOB_YYYY <- c(rep(2001,8950))
+Stdt_EXIT_MM <- sample(1:12,8950,replace=TRUE)
+Stdt_EXIT_DD <- sample(1:28,8950,replace=TRUE)
+Stdt_EXIT_YYYY <- sample(2016:2020,8950,replace=TRUE)
+Stdt_Primary_Dis <- sample(1:12,8950,replace=TRUE)
+Stdt_Gender <- sample(1:3,8950,replace=TRUE)
+Stdt_Race_Eth <- sample(1:7,8950,replace=TRUE)
+Stdt_Exit_Status <-sample(1:4,8950,replace=TRUE)
+#
+  
+#I-14 Survey
+#14.A
+PSE_STATUS <- sample(1:2,8950,replace=TRUE)
+PSE_TERM <- ifelse(PSE_STATUS==2,sample(1:2,8950,replace=TRUE), print(""))
+
+#OSEP / NTACT's discrete categories may not be enough for PA's needs, we could add a 6th option for certificate programs (e.g., bootcamps, ect.) or more as needed.
+
+PSE_PGRM <- ifelse(PSE_STATUS==2,sample(1:6,8950,replace=TRUE), print(""))
+
+#14.B
+EMPLY_STATUS <- sample(1:2,8950,replace=TRUE)
+
+#the following variables combine to measure CIE
+EMPLY_3MNTHs <- ifelse(EMPLY_STATUS==2,sample(1:2,8950,replace=TRUE), print(""))
+
+EMPLY_20Hrs <- ifelse(EMPLY_STATUS==2,sample(1:2,8950,replace=TRUE), print (""))
+
+EMPLY_WAGE <- ifelse(EMPLY_STATUS==2,sample(1:2,8950,replace=TRUE), print(""))
+
+EMPLY_INTERACT <- ifelse(EMPLY_STATUS==2,sample(1:2,8950,replace=TRUE), print(""))
+
+EMPLY_PROMO <- ifelse(EMPLY_STATUS==2,sample(1:2,8950,replace=TRUE), print(""))
+
+COMPANY_NAME <- ifelse(EMPLY_STATUS==2,"Example LLC.", print(""))
+
+COMPANY_TYPE <- ifelse(EMPLY_STATUS==2,sample(1:8,8950,replace=TRUE), print(""))
+
+CAREER_CLUSTER <- ifelse(EMPLY_STATUS==2,sample(1:16,8950,replace=TRUE), print(""))
+
+EQUAL_COMP <- ifelse(EMPLY_STATUS==2,sample(1:2,8950,replace=TRUE), print(""))
+
+BENEFITS <- ifelse(EMPLY_STATUS==2,sample(1:2,8950,replace=TRUE), print(""))
+
+#I.14 Status
+HigherEd <- if(PSE_STATUS==2 
+               & PSE_STATUS==1
+               | PSE_STATUS==2
+               & PSE_PGRM==4){print(1)} else {print(0)}
+
+CIE <- if(EMPLY_STATUS==2
+          & !is.null(EMPLY_3MNTHs) 
+          & !is.null(EMPLY_20Hrs) 
+          & !is.null(EMPLY_WAGE) 
+          & !is.null(EMPLY_INTERACT) 
+          & !is.null(EMPLY_PROMO) 
+          & (COMPANY_TYPE==1:5)
+          & !is.null(EQUAL_COMP)
+          & !is.null(BENEFITS)) {print(1)} else {print(0)}
+
+OTHERPSE <- if(PSE_STATUS==2 
+               & PSE_TERM==2 
+               | PSE_PGRM==1
+               | PSE_PGRM==2
+               | PSE_PGRM==3
+               | PSE_PGRM==5
+               | PSE_PGRM==6) {print(1)} else {print(0)}
+
+OTHEREMPLY <- if(EMPLY_STATUS==2
+                 | EMPLY_3MNTHs==2
+                 | EMPLY_20Hrs==2
+                 | EMPLY_WAGE==2
+                 | EMPLY_INTERACT==2
+                 | EMPLY_PROMO==2
+                 | COMPANY_TYPE==1:8
+                 & EQUAL_COMP==1
+                 & BENEFITS==1){print(1)} else {print(0)}
+
+NOTENGAGED <- if(PSE_STATUS==1
+                 & EMPLY_STATUS==1
+                 & EMPLY_3MNTHs==1){print(1)} else {print(0)}
+
+sampledata <- data.frame(
+  School_Name,
+  School_District_Code,School_Geo,
+  Student_Last,
+  Student_First,
+  Student_Middle,
+  Stdt_Dis_ID,
+  Stdt_State_ID,
+  Stdt_Survey_ID,
+  Stdt_DOB_MM,
+  Stdt_DOB_DD,
+  Stdt_DOB_YYYY,
+  Stdt_EXIT_MM,
+  Stdt_EXIT_DD,
+  Stdt_EXIT_YYYY,
+  Stdt_Primary_Dis,
+  Stdt_Gender,
+  Stdt_Race_Eth,
+  Stdt_Exit_Status,
+  PSE_STATUS,
+  PSE_TERM,
+  PSE_PGRM,
+  EMPLY_STATUS,
+  EMPLY_3MNTHs,
+  EMPLY_20Hrs,
+  EMPLY_WAGE,
+  EMPLY_INTERACT,
+  EMPLY_PROMO,
+  COMPANY_TYPE,
+  EQUAL_COMP,
+  BENEFITS
+  )
+
+#calculate percentages for 14 A, B and C
+
+percentageA <- (sum(HigherEd)/sum(Stdt_Survey_ID))*100
+
+percentageB <- ((sum(percentageA) + sum(CIE))/sum(Stdt_Survey_ID))*100
+
+percentagec <- ((sum(percentageA) + sum(percentageB) + sum(OTHERPSE) + sum(OTHEREMPLY))/sum(Stdt_Survey_ID))*100
+
+percentage_notengaged <- ((sum(Stdt_Survey_ID) - percentagec) / Stdt_Survey_ID)*100 
+
+```
+
