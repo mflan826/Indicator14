@@ -1,38 +1,61 @@
----
-title: "R Notebook"
-output: html_notebook
----
-
 ```{r}
 library(tidyverse)
-#create demographic variables
-Stdt_Survey_ID <- c(1:8950)
-School_Name <- sprintf("School %d",1:895)
-School_District_Code <- c("001")
-School_Geo <- c("1")
-Student_Last <- c(rep("Doe",8950))
-Student_First <- c(rep("Jane",8950))
-Student_Middle <- c(rep("Test",8950))
-Stdt_Dis_ID <- School_District_Code
-Stdt_State_ID <- c(rep(29,8950))
-Stdt_DOB_MM <- sample(1:12,8950,replace=TRUE)
-Stdt_DOB_DD <- sample(1:28,8950,replace=TRUE)
-Stdt_DOB_YYYY <- c(rep(2001,8950))
-Stdt_EXIT_MM <- sample(1:12,8950,replace=TRUE)
-Stdt_EXIT_DD <- sample(1:28,8950,replace=TRUE)
-Stdt_EXIT_YYYY <- sample(2016:2020,8950,replace=TRUE)
-Stdt_Primary_Dis <- sample(1:12,8950,replace=TRUE)
-Stdt_Gender <- sample(1:3,8950,replace=TRUE)
-Stdt_Race_Eth <- sample(1:7,8950,replace=TRUE)
-Stdt_Exit_Status <-sample(1:4,8950,replace=TRUE)
-#
+
+#Create variables from PennData 12/1 Export
+PaSecureID <- sample(1111111:9999999,1000)
+StdttNameFirst <- c("First")
+StdtNameMiddle <- c("Middle")
+StdttNameLast <- c("Last")
+StdtDOB <- c("2004-01-12")
+StdtDOB <- as.Date(StdntDOB)
+StdtPrmryDis <- sample(1:12,1000, replace=TRUE)
+StdtGender <- sample(1:2,1000,replace = TRUE)
+StdtLEA <- sample(1:50,1000,replace = TRUE)
+StdtSchool <- sample(1:300,1000,replace = TRUE)
+StdtEth <- sample(1:7,1000,replace = TRUE)
+ExitStatus <- sample(1:10,1000, replace = TRUE)
+#Diploma, GED, Aged out, dropped out, transfer to gen ed, moved out of state - continuing, died, moved within state - continuing (1:9,99 becomes 1:10)
+PennData <- data.frame(
+  StdtNameFirst,
+  StdtNameMiddle,
+  StdtNameLast,
+  StdtDOB,
+  StdtPrmryDis,
+  StdtGender,
+  StdtLEA,
+  StdtSchool,
+  StdtEth,
+  ExitStatus
+)
+
+```
+
+```{r}
+#Gathered from the SAAFP 2.0 - Exit Data
+StdtStreet <- c("123 Main Street")
+StdtCity <- c("Anywhere")
+StdtZip <- c(15001)
+StdtState <- c("PA") #vector of 50 states, drop-down
+StdtHomePhone <- c("111-111-1111")
+StdtCellPhone <- c("222-222-2222")
+StdtEmail <- c("Test1@gmail.com") #NOT school email
+PCFirstName <- c("George")
+PCLastName <- c("Washington")
+PCStreet <- c("123 Side Street")
+PCCITY <- c("Somewhere")
+PCHomePhone <- c("333-333-3333")
+PCCellPhone <- c("444-444-4444")
+PCEmail <- c("Test2@gmail.com")
+
+#Gathered from SAAFP 2.0
+
   
-#I-14 Survey
+#Gathered through I-14 Survey
 #14.A
 PSE_STATUS <- sample(1:2,8950,replace=TRUE)
 PSE_TERM <- ifelse(PSE_STATUS==2,sample(1:2,8950,replace=TRUE), print(""))
 
-#OSEP / NTACT's discrete categories may not be enough for PA's needs, we could add a 6th option for certificate programs (e.g., bootcamps, ect.) or more as needed.
+#OSEP / NTACT's categories may not be enough for PA's needs, we could add a 6th option for certificate programs (e.g., bootcamps, ect.) or more as needed.
 
 PSE_PGRM <- ifelse(PSE_STATUS==2,sample(1:6,8950,replace=TRUE), print(""))
 
@@ -133,13 +156,13 @@ sampledata <- data.frame(
 
 #calculate percentages for 14 A, B and C
 
-percentageA <- (sum(HigherEd)/sum(Stdt_Survey_ID))*100
+percentageA <- (sum(HigherEd))/(sum(Stdt_Survey_ID))*100
 
-percentageB <- ((sum(percentageA) + sum(CIE))/sum(Stdt_Survey_ID))*100
+percentageB <- (sum(HigherED,CIE))/(sum(Stdt_Survey))*100
+                
+percentageC
 
-percentagec <- ((sum(percentageA) + sum(percentageB) + sum(OTHERPSE) + sum(OTHEREMPLY))/sum(Stdt_Survey_ID))*100
 
-percentage_notengaged <- ((sum(Stdt_Survey_ID) - percentagec) / Stdt_Survey_ID)*100 
 
 ```
 
